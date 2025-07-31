@@ -56,7 +56,6 @@ async def chat(request: ChatRequest, graph=Depends(lang_agent.build_workflow)):
             }
         
         result_state = await graph.ainvoke(input=intial_state)
-        print(f"Result State: {result_state}")
         # Update the result state
         update_state_result(result_state)
         
