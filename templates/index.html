@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select a Game</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <button onclick="startNewSession()">Start a New Session</button>
+
+  <div class="container">
+    <h1>Select a Game</h1>
+    
+    <div class="game-cards">
+      <div class="game-card" onclick="startGame('number_game')">
+        <h2>Number Game</h2>
+        <p>Think of a number between 1-50 and I'll try to guess it!</p>
+        <button id ="number-game-button" >Play Number Game</button>
+      </div>
+      
+      <div class="game-card" onclick="startGame('word_game')">
+        <h2>Word Game</h2>
+        <p>Choose a word from a list and I'll try to guess it with five yes/no questions!</p>
+        <button id="word-game-button" >Play Word Game</button>
+      </div>
+      
+      <div class="game-card" onclick="showResult()">
+        <h2>Result</h2>
+        <p id="reult-info">Click here to see your result</p>
+        <p id="result-text"></p>
+        <button id="result-button" >Show My Result</button>
+      </div>
+    </div>
+    
+    <div class="game-info">
+      <h3>How to Play</h3>
+      <p>Select a game above to start playing. The AI will guide you through the game process. You can return to this menu at any time during gameplay.</p>
+    </div>
+  </div>
+
+
+  <script>
+    function startGame(gameType) {
+      localStorage.setItem('gameType', gameType);
+      window.location.href = '/game';
+    }
+    document.getElementById('number-game-button').addEventListener('click', function() {
+      localStorage.setItem('gameType', 'number_game');
+      window.location.href = '/game';
+    });
+    document.getElementById('word-game-button').addEventListener('click', function() {
+      localStorage.setItem('gameType', 'word_game');
+      window.location.href = '/game';
+    });
+  </script>
+
+  <script>
+
+    function updateConversation(message) {
+      console.log("final res msg:-->", message);
+
+      document.getElementById("result-text").innerText = message;
+      document.getElementById("reult-info").innerText = "";
+    }
+
+    function showResult() {
+
+      fetch('/api/v1/agent/game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_input: "result",
+          session_id: localStorage.getItem('sessionId'),
+          user_query: "",
+          game_type: "",
+          end_game: false
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          updateConversation(data.data);
+          document.getElementById("result-button").value = "";
+        }
+      })
+      .catch(error => {
+        console.error("API Error:", error);
+        updateConversation("Error connecting to the server. Please try again.");
+        toggleInputState(true);
+      });
+    }
+    
+    function startNewSession() {
+      const newSessionId = `sess_${crypto.randomUUID()}`;
+      localStorage.setItem('sessionId', newSessionId);
+      alert(`New session started: ${newSessionId}`);
+    }
+
+  </script>
+</body>
+</html>
