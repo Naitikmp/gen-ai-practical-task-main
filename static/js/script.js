@@ -12,6 +12,7 @@ window.onload = () => {
     body: JSON.stringify({ 
       user_input: gameType,
       user_query: "",
+      session_id: localStorage.getItem('sessionId'),
       game_type: gameType,
       end_game: false
     })
@@ -61,6 +62,7 @@ function submitAnswer() {
     body: JSON.stringify({
       user_input: userInput,
       user_query: "",
+      session_id: localStorage.getItem('sessionId'),
       game_type: gameType,
       end_game: false
     })

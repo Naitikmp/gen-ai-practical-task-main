@@ -21,7 +21,7 @@ router = APIRouter(prefix="/agent", tags=["agent"])
 lang_agent = LanggraphAgents()
 logger = logging.getLogger(__name__)
 
-session_id = str(uuid.uuid4())
+# session_id = str(uuid.uuid4())
 
 @router.post("/game")
 async def chat(request: ChatRequest, graph=Depends(lang_agent.build_workflow)):
@@ -29,8 +29,8 @@ async def chat(request: ChatRequest, graph=Depends(lang_agent.build_workflow)):
         logger.info("========= Inside Game API =========")
         
         
-        global session_id
-        logger.debug(f"Request Session ID: '{session_id}'")
+        session_id = request.session_id
+        logger.debug(f"Request Session ID: '{request.session_id}'")
         session_file = os.path.join(SESSION_DIR, f"{session_id}.json")
         
         initialize_session(session_id, session_file)    

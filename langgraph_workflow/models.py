@@ -6,6 +6,7 @@ class ChatRequest(BaseModel):
     end_game : bool = False
     game_type: str = None
     user_query: str = None
+    session_id: str = None
     chat_history : dict = None
     
 # Define state schema
